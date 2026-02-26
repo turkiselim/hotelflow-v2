@@ -33,7 +33,7 @@ export default function LoginPage() {
         <div style={{ textAlign:'center', marginBottom:32 }}>
           <div style={{ width:56, height:56, borderRadius:16, background:'linear-gradient(135deg,#d4a017,#b8860b)', display:'inline-flex', alignItems:'center', justifyContent:'center', fontSize:26, marginBottom:12 }}>🏨</div>
           <h1 style={{ fontFamily:"'Playfair Display',serif", fontSize:28, color:'#fff', fontWeight:600, marginBottom:4 }}>HôtelFlow</h1>
-          <p style={{ fontSize:13, color:'rgba(255,255,255,0.4)', letterSpacing:'1px', textTransform:'uppercase' }}>Grand Hôtel Méditerranée</p>
+          <p style={{ fontSize:13, color:'rgba(255,255,255,0.4)', letterSpacing:'1px', textTransform:'uppercase' }}>Médina Bélisaire & Thalasso</p>
         </div>
 
         {/* Card */}

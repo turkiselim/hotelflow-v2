@@ -119,7 +119,7 @@ router.post('/invite', async (req, res) => {
       email: newUser.email,
       name: newUser.name,
       inviterName: inviter.name,
-      hotelName: 'Grand Hôtel Méditerranée',
+      hotelName: 'Médina Bélisaire & Thalasso',
       invitationLink: process.env.CLIENT_URL || 'http://localhost:5173',
       temporaryPassword,
     });
