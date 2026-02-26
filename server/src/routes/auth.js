@@ -71,41 +71,28 @@ router.post('/register', async (req, res) => {
 // Se connecter
 router.post('/login', async (req, res) => {
   try {
-    const data = loginSchema.parse(req.body);
-
-    // Trouver l'utilisateur
-    const user = await prisma.user.findUnique({ where: { email: data.email } });
+    const { email, password } = req.body;
+    
+    const user = await prisma.user.findUnique({ where: { email } });
+    
     if (!user) {
-      return res.status(401).json({ error: 'Email ou mot de passe incorrect.' });
+      return res.status(401).json({ error: 'Aucun utilisateur trouvé avec cet email' });
     }
 
-    // Vérifier le mot de passe
-    const validPassword = await bcrypt.compare(data.password, user.password);
-    if (!validPassword) {
-      return res.status(401).json({ error: 'Email ou mot de passe incorrect.' });
+    const valid = await bcrypt.compare(password, user.password);
+    
+    if (!valid) {
+      return res.status(401).json({ error: 'Mot de passe incorrect' });
     }
 
-    // Mettre à jour le statut en ligne
-    await prisma.user.update({
-      where: { id: user.id },
-      data: { isOnline: true }
+    const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
+    
+    res.json({
+      token,
+      user: { id: user.id, name: user.name, email: user.email, role: user.role, avatar: user.avatar }
     });
-
-    // Générer le token
-    const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
-    );
-
-    const { password, ...userWithoutPassword } = user;
-    res.json({ user: userWithoutPassword, token });
-
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: error.errors[0].message });
-    }
-    console.error('Erreur login:', error);
+  } catch (e) {
+    console.error(e);
     res.status(500).json({ error: 'Erreur serveur' });
   }
 });

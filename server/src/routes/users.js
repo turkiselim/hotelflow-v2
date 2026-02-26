@@ -178,5 +178,46 @@ router.patch('/me/password', async (req, res) => {
   }
 });
 
+// POST /api/users/:id/reset-password — réinitialiser le mot de passe (admin only)
+router.post('/:id/reset-password', async (req, res) => {
+  try {
+    if (req.user.role !== 'ADMIN') {
+      return res.status(403).json({ error: 'Accès refusé' });
+    }
+
+    const bcrypt = require('bcryptjs');
+    const temporaryPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8).toUpperCase();
+    const hashedPassword = await bcrypt.hash(temporaryPassword, 12);
+
+    const user = await prisma.user.update({
+      where: { id: req.params.id },
+      data: { password: hashedPassword },
+      select: { id: true, name: true, email: true }
+    });
+
+    // Envoyer le nouveau mot de passe par email
+    const { sendInvitation } = require('../services/email');
+    const admin = await prisma.user.findUnique({ where: { id: req.user.id } });
+    
+    await sendInvitation({
+      email: user.email,
+      name: user.name,
+      inviterName: admin.name,
+      hotelName: 'Médina Bélisaire & Thalasso',
+      invitationLink: process.env.CLIENT_URL || 'http://localhost:5173',
+      temporaryPassword,
+    });
+
+    res.json({ 
+      message: 'Mot de passe réinitialisé et envoyé par email',
+      temporaryPassword  // Pour que l'admin puisse le voir aussi
+    });
+
+  } catch (error) {
+    console.error('Erreur réinitialisation:', error);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
 module.exports = router;
 

@@ -222,6 +222,30 @@ function MemberProfileModal({ memberId, onClose, isAdmin, currentUserId }) {
                         </div>
                       </div>
 
+                      {/* Réinitialiser mot de passe */}
+                      <div className="card" style={{ padding:16 }}>
+                        <div style={{ fontSize:12, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.8px', color:'var(--text-muted)', marginBottom:12 }}>🔑 Mot de passe</div>
+                        <div style={{ fontSize:13, color:'var(--text-muted)', marginBottom:12 }}>
+                          Générez un nouveau mot de passe temporaire qui sera envoyé par email à {member.name}.
+                        </div>
+                        <button 
+                          onClick={async () => {
+                            if (!confirm(`Réinitialiser le mot de passe de ${member.name} ?\n\nUn nouveau mot de passe temporaire sera généré et envoyé par email.`)) return;
+                            try {
+                              const res = await api.post(`/users/${memberId}/reset-password`);
+                              toast(`🔑 Mot de passe réinitialisé !\n\nNouveau mot de passe : ${res.data.temporaryPassword}\n\nL'utilisateur a également reçu un email.`);
+                            } catch (e) {
+                              toast(e.response?.data?.error || '❌ Erreur lors de la réinitialisation', 'error');
+                            }
+                          }}
+                          style={{ padding:'10px 16px', borderRadius:9, background:'var(--gold)', border:'none', color:'#fff', fontFamily:'inherit', fontWeight:700, fontSize:13, cursor:'pointer', transition:'all 0.15s' }}
+                          onMouseEnter={e => e.currentTarget.style.background='var(--gold-bright)'}
+                          onMouseLeave={e => e.currentTarget.style.background='var(--gold)'}
+                        >
+                          🔑 Réinitialiser le mot de passe
+                        </button>
+                      </div>
+
                       {/* Supprimer */}
                       <div className="card" style={{ padding:16, border:'1px solid rgba(192,57,43,0.25)', background:'var(--red-light)' }}>
                         <div style={{ fontSize:12, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.8px', color:'var(--red)', marginBottom:8 }}>⚠️ Zone dangereuse</div>
