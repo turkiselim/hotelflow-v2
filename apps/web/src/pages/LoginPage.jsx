@@ -57,7 +57,7 @@ export default function LoginPage() {
 
             {/* Demo hint */}
             <div style={{ padding:'10px 14px', borderRadius:9, background:'rgba(212,160,23,0.1)', border:'1px solid rgba(212,160,23,0.2)', marginBottom:16, fontSize:12, color:'rgba(212,160,23,0.9)' }}>
-              💡 Démo : <strong>alex@teamflow.dev</strong> · <strong>password123</strong>
+              💡 Démo : <strong>turkiselim@gmail.com</strong> · <strong>password123</strong>
             </div>
 
             {error && (
